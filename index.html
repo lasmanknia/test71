@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Anonymous Post</title>
+    <style>
+        *{
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+	font-family: 'poppins', sans-serif;
+	font-size: 18px;
+}
+h1{
+    font-size: 3rem;
+    text-align: center;
+    background-color: black;
+    color: white;
+    padding: 20px;
+    margin-top: 2px;
+}
+nav{
+    width: 90vw;
+    position: fixed;
+    bottom: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px;
+    border-radius: 40px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.con{
+    text-align: center;
+}
+.mess{
+	width: 60vw;
+	padding: 55px;
+    border-radius: 30px;
+    height: 10px;
+    font-size: 3rem;
+    border: none;
+}
+#submit{
+    margin: 5px;
+    padding: 15px;
+	border: none;
+	margin-top: 10px;
+	border-radius: 5px;
+    font-size: 3rem;
+    border-radius: 10px;
+    background-color: transparent;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+#dataContainer{
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.data-row {
+    border: 1px solid #ccc;
+    padding: 70px 30px;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    width: 80vw;
+    margin: 20px auto;
+}
+    </style>
+</head>
+<body>
+    
+
+    <nav>
+        <div class="con">
+            <form method="post" action="https://script.google.com/macros/s/AKfycbz5xYnofeJ9yto419gw_IXVHNndd4hKJyOSBoT8PURi0KyHs9EVQd1gqIsY8gE6lFkY/exec" name="contact-form">
+                <input class="mess" name="message" rows="7" placeholder="Your Post"></input>
+                <input type="submit" value="POST" id="submit">
+            </form>
+        </div>
+    </nav>
+   
+    <h1>Anonymous Post</h1>
+    <div id="dataContainer"></div>
+
+	<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz5xYnofeJ9yto419gw_IXVHNndd4hKJyOSBoT8PURi0KyHs9EVQd1gqIsY8gE6lFkY/exec'
+
+const form = document.forms['contact-form']
+
+form.addEventListener('submit', e => {
+  e.preventDefault()
+  fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+  .then(response => alert("Thank you! your form is submitted successfully." ))
+  .then(() => { window.location.reload(); })
+  .catch(error => console.error('Error!', error.message))
+})
+
+//for post
+
+document.addEventListener('DOMContentLoaded', () => {
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRvuFwKs3o_Qkn9wczhFIyTVk20tHWFL7OwVqeC3KK1z0V5qZROkr_o8PymIzYciKerqTKYlzJuvYJk/pub?gid=0&output=csv';
+    loadDataFromCSV(csvUrl);
+});
+
+function loadDataFromCSV(csvUrl) {
+    fetch(csvUrl)
+        .then(response => response.text())
+        .then(data => {
+            const values = parseCSV(data);
+            displayData(values);
+        })
+        .catch(error => {
+            console.error('Error loading data from the Google Sheets CSV:', error);
+        });
+}
+
+function parseCSV(csvData) {
+    const lines = csvData.split('\n');
+    if (lines.length < 2) {
+        console.error('Invalid CSV data');
+        return null;
+    }
+
+    const values = lines.slice(1).map(line => line.replace(/,/g, '').trim());
+    console.log('Column B values (skipping first row):', values);
+    return values;
+}
+
+function displayData(values) {
+    const dataContainer = document.getElementById('dataContainer');
+
+    values.forEach(value => {
+        const rowElement = document.createElement('div');
+        rowElement.classList.add('data-row');
+        rowElement.innerText = value;
+
+        dataContainer.appendChild(rowElement);
+    });
+} 
+</script>
+</body>
+</htm
